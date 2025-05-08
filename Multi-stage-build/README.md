@@ -24,56 +24,54 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
- calculator.py .
- requirements.txt .
+COPY calculator.py .
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["python", "calculator.py"]
-✅ Pros:
-Easy to understand and set up
 
-Great for beginners
+Why we use it:
 
-All-in-one image with both build and run logic
+Simple and easy to understand.
+
+Good for development and learning.
+
+Includes everything needed to build and run the app.
 
 ❌ Cons:
 Slightly larger image
 
 Includes build-time tools you don’t need in production
 
-🐳 Multi-Stage Dockerfile
+'''🐳 Multi-Stage Dockerfile'''
 dockerfile
-
-Edit
-# Dockerfile.multi
 
 # Stage 1: Build
 FROM python:3.10-slim as builder
 
 WORKDIR /app
-
- calculator.py .
- requirements.txt .
+COPY calculator.py .
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt \
-    && mkdir -p /out \
-    && cp -r . /out
+ && mkdir -p /out && cp -r . /out
 
-# Stage 2: Final image
+# Stage 2: Final
 FROM python:3.10-slim
 
 WORKDIR /app
-
- --from=builder /out /app
+COPY --from=builder /out /app
 
 CMD ["python", "calculator.py"]
-✅ Pros:
-Allows separation of build and runtime environments
 
-Keeps final image clean and small
+Why multistage?
+Reduces image size.
 
-Good for production, better security and maintainability
+Separates build from production.
+
+Safer and cleaner for deployment.
+
 
 ❌ Cons:
 Slightly more complex to write
@@ -86,64 +84,34 @@ Distroless images include only your app and its runtime. No shell, no package ma
 📦 Example:
 dockerfile
 
-Edit
 FROM gcr.io/distroless/python3
- calculator.py .
+COPY calculator.py .
 CMD ["calculator.py"]
+
 ✅ Benefits:
 Minimal size
-
 Fewer vulnerabilities
-
 Faster startup
 
 ❌ Downsides:
 No shell inside container (harder to debug)
-
 No interactive CLI access
 
 🔍 Docker Image Strategy Comparison
-Feature	Regular Dockerfile	Multi-Stage Dockerfile	Distroless
-Simplicity	✅ Easy	🔶 Medium	❌ Complex to debug
-Image Size	🔶 Medium (~50MB)	✅ Smaller	✅ Very Small (~15MB)
-Debugging	✅ Easy (has shell)	🔶 Limited	❌ No shell or package mgr
-Security	🔶 OK	✅ Better	✅ Best
-Best Use Case	Learning, testing	Production-ready	Security-sensitive prod
+| Feature    | Regular Dockerfile | Multistage Dockerfile | Distroless        |
+| ---------- | ------------------ | --------------------- | ----------------- |
+| Simplicity | ✅ Easy             | 🔶 Medium             | ❌ Advanced        |
+| Image Size | 🔶 Medium (\~50MB) | ✅ Smaller             | ✅ Smallest        |
+| Debugging  | ✅ Yes              | 🔶 Moderate           | ❌ No shell        |
+| Best For   | Learning, Dev      | Production            | Secure Production |
 
 🚀 How to Build and Run
 With Regular Dockerfile:
 
-
-Edit
 docker build -t calc:basic -f Dockerfile .
 docker run -it calc:basic
+
 With Multistage Dockerfile:
 
-
-Edit
 docker build -t calc:multi -f Dockerfile.multi .
 docker run -it calc:multi
-🐳 Using Docker Compose
-If you want to manage the app with Docker Compose, here's how.
-
-📄 docker-compose.yml
-yaml
-
-Edit
-version: '3.8'
-
-services:
-  calculator:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: python-calculator
-    stdin_open: true
-    tty: true
-▶️ Run with Compose
-docker-compose up --build
-💡 Use Multistage in Compose
-To use the multistage Dockerfile instead, update this line:
-
-
-Distroless GitHub
