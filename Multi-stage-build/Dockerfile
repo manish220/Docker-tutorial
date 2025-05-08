@@ -1,5 +1,5 @@
 # Stage 1: Use full Python image to "build" (if needed)
-FROM python:3.10-slim as builder
+FROM python:3.10 as build
 WORKDIR /app
 COPY calculator.py .
 COPY requirements.txt .
@@ -10,7 +10,7 @@ FROM python:3.10-alpine
 WORKDIR /app
 
 # Copy only what's needed from builder
-COPY --from=builder /app /app
+COPY --from=build /app /app
 
 # Set default command
 CMD ["python", "calculator.py"]
