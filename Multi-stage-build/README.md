@@ -115,3 +115,13 @@ With Multistage Dockerfile:
 
 docker build -t calc:multi -f Dockerfile.multi .
 docker run -it calc:multi
+
+✅ Languages Commonly Using Distroless Images
+Language	Distroless Friendly?	Why / Why Not
+Go	✅ Excellent	Compiles to a static binary — no runtime needed
+Rust	✅ Excellent	Like Go — can statically compile everything
+Java	✅ Good	Needs JVM, but distroless has a Java base
+Node.js	✅ Supported	Uses distroless Node base — runtime is included
+Python	⚠️ Possible (not ideal)	Needs interpreter — distroless includes one, but debugging is harder
+.NET	✅ Works (via distroless .NET)	Microsoft even has base images for this
+C/C++	✅ If statically built	Needs careful static linking
